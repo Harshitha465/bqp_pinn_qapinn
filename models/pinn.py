@@ -1,3 +1,6 @@
+import torch
+import torch.nn as nn
+
 ACTIVATIONS = {"tanh": nn.Tanh, "relu": nn.ReLU, "gelu": nn.GELU, "silu": nn.SiLU, "elu": nn.ELU}
 
 class ClassicalPINN(nn.Module):
