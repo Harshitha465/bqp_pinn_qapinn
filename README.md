@@ -1,4 +1,4 @@
-# Quantum-Assisted Physics-Informed Neural Networks for Computational Fluid Dynamics
+# Quantum-Assisted Physics-Informed Neural Networks for Physics based PDEs
 
 **WISER Summer Program 2026 – BQP Challenge**
 
