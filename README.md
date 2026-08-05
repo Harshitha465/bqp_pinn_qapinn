@@ -147,3 +147,18 @@ The key findings of this study include:
 - Increasing the number of qubits reduced gradient variance, highlighting a trade-off between model expressivity and trainability.
 - The strongly entangling ansatz exhibited PDE-dependent training behavior, demonstrating that the effectiveness of a quantum circuit depends on the characteristics of the underlying differential equation.
 - Overall, the results indicate that quantum layers provide problem-specific advantages rather than serving as a universal replacement for classical PINNs.
+
+  ## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Harshitha465/bqp_pinn_qapinn.git
+cd bqp_pinn_qapinn
+```
+
+Install the required dependencies:
+
+```bash
+pip install -r requirements.txt
+```
