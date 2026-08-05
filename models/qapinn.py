@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 import pennylane as qp
 
-from .pinn import ACTIVATIONS
-from .quantum_layers import QuantumLayerJax
+from .pinn_classical import ACTIVATIONS
+from .quantum_layer import QuantumLayerJax
 
 SUPPORTED_ENCODINGS = ["angle", "reupload"]
 SUPPORTED_ANSATZ = ["basic_entangler", "strongly_entangling"]
@@ -34,8 +34,13 @@ def build_qnode(n_qubits, n_layers, encoding="angle", ansatz="basic_entangler"):
     return circuit
 
 class QAPINN(nn.Module):
+    """
+    Quantum-Adaptive Physics-Informed Neural Network (QA-PINN).
+    Combines classical input embedding, parameterized quantum circuits (PQC),
+    and classical post-processing layers.
+    """
     def __init__(self, n_qubits=3, n_qlayers=3, classical_hidden=(25, 25, 25, 25),
-                 encoding="angle", ansatz="basic_entangler", activation="tanh"):
+                 encoding="angle", ansatz="basic_entangler", activation="tanh", output_dim=3):
         super().__init__()
         self.n_qubits, self.n_qlayers = n_qubits, n_qlayers
         self.encoding, self.ansatz = encoding, ansatz
@@ -48,7 +53,7 @@ class QAPINN(nn.Module):
         for h in classical_hidden:
             modules += [nn.Linear(prev, h), act()]
             prev = h
-        modules.append(nn.Linear(prev, 3))
+        modules.append(nn.Linear(prev, output_dim))
         self.postprocessing = nn.Sequential(*modules)
 
     def to(self, device):
@@ -61,7 +66,7 @@ class QAPINN(nn.Module):
         inputs = torch.cat([x, y], dim=1)
         projected = self.input_projection(inputs)
         quantum_out = self.quantum_layer(projected)
-        # Fixed: Handle cases where JAX/PennyLane batching might transpose dimensions
+        # Handle cases where JAX/PennyLane batching might transpose dimensions
         if quantum_out.shape[0] == self.n_qubits and quantum_out.shape[1] == projected.shape[0]:
             quantum_out = quantum_out.T
         return self.postprocessing(quantum_out)

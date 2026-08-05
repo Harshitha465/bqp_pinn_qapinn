@@ -1,77 +1,112 @@
-# Designing a Problem-Specific Quantum Circuit
+# Methodology — Mathematical Framework & Circuit Derivations
 
-*Develop a methodology for constructing a problem-specific quantum circuit and QAPINN architecture.*
+## 1. Problem Formulation
 
-This page explains the quantum-circuit design choices behind our Quantum-Assisted Physics-Informed Neural Network (QAPINN), with circuit diagrams. The full staged methodology, fair-comparison protocol, and results are in the PDF linked at the bottom.
+### 1.1 Physics-Informed Neural Network (PINN) Loss
 
-**Headline finding:** across the 1D heat and Burgers equations, the best circuit is **angle encoding + a cascade (chain) entangling topology, at 3 qubits and depth 3**. On the smooth heat equation the quantum layer beats a classical PINN with fewer parameters; on the sharper Burgers equation it is a parameter-efficiency win rather than an accuracy win.
+A PINN parametrises the PDE solution $\hat{u}_\theta(x, t) = \text{NN}(x, t; \theta)$ and minimises:
 
----
+$$\mathcal{L}(\theta) = w_{ic}\,\mathcal{L}_{ic}(\theta) + w_{bc}\,\mathcal{L}_{bc}(\theta) + w_{r}\,\mathcal{L}_{r}(\theta)$$
 
-## The QAPINN architecture
+where each term is the mean-squared residual over sampled collocation, initial, and boundary points computed via automatic differentiation. For all experiments: $w_{ic} = w_{bc} = w_r = 1.0$.
 
-A QAPINN keeps the skeleton of a normal PINN but swaps its middle for a small quantum circuit (a VQC). The coordinates `(x, t)` are turned into rotation angles by a classical layer, fed into the quantum circuit, and the circuit's measured outputs are mapped to the predicted field value `û(x, t)`. Everything is held fixed **except the quantum circuit**, so any change in accuracy can be attributed to the circuit design.
+### 1.2 PDE Benchmarks
 
-![QAPINN hybrid architecture](figures/qapinn_pipeline.png)
+**1D Heat Equation (linear diffusion):**
+$$u_t = \alpha\,u_{xx}, \quad x \in [-1,1],\; t \in [0,1], \quad \alpha = 0.1$$
+$$u(x,0) = \sin(\pi x), \quad u(\pm 1, t) = 0 \qquad \text{Exact: } u = \sin(\pi x)\,e^{-\alpha\pi^2 t}$$
 
-The circuit is defined by two main choices — **how the data is encoded** and **how the qubits are entangled** — plus two dials, **depth** and **number of qubits**.
+**1D Viscous Burgers' Equation (nonlinear, shockwave):**
+$$u_t + u\,u_x = \nu\,u_{xx}, \quad \nu = 0.01/\pi, \quad u(x,0) = -\sin(\pi x), \quad u(\pm 1, t) = 0$$
+Ground truth via Cole–Hopf transform + Gauss–Hermite quadrature.
 
-> **Note on the diagrams:** the data-encoding gates and the trainable gates are *both* `RY` rotations. They differ only in their argument: encoding gates are `RY(x,t)` (the coordinates, shaded orange) and trainable gates are `RY(θ)` (the learned weights).
-
----
-
-## 1. Encoding: how the data enters the circuit
-
-The encoding decides how many times, and where, the coordinates `(x, t)` are injected into the circuit.
-
-**Angle encoding** feeds the data in *once*, at the very beginning, as qubit rotation angles. After that, only the trainable layers act. It is the simplest and fastest option and is usually the easiest to train.
-
-![Angle encoding](figures/encoding_angle.png)
-
-**Re-upload encoding** feeds the data in *again before every layer* — the coordinates are re-injected repeatedly (note the two orange `RY(x,t)` blocks below). This makes the model more expressive: a data-reuploading circuit builds a richer Fourier series, so it can represent finer, higher-frequency structure. The cost is that it is slower and can be harder to optimise, and deep re-upload circuits can suffer weak or unstable gradients.
-
-![Re-upload encoding](figures/encoding_reupload.png)
-
-In short: angle is the lean, stable default; re-upload buys extra expressivity at the price of training difficulty. **In our experiments, angle encoding won.**
+**2D Kovasznay Flow (steady incompressible Navier–Stokes):**
+$$u\,u_x + v\,u_y = -p_x + \nu(u_{xx}+u_{yy}), \quad u\,v_x + v\,v_y = -p_y + \nu(v_{xx}+v_{yy}), \quad u_x + v_y = 0$$
+$$\nu = 1/Re,\quad Re = 40, \quad \lambda = \frac{Re}{2} - \sqrt{\frac{Re^2}{4} + 4\pi^2} \approx -0.9637$$
+$$\text{Exact: } u = 1 - e^{\lambda x}\cos(2\pi y),\quad v = \frac{\lambda}{2\pi}e^{\lambda x}\sin(2\pi y),\quad p = \frac{1}{2}(1 - e^{2\lambda x})$$
 
 ---
 
-## 2. Topology: how the qubits are entangled
+## 2. QAPINN Architecture
 
-The topology decides which qubits get linked by entangling (CNOT) gates inside each layer. This is what lets the qubits share information instead of evolving independently.
+The QAPINN replaces the first hidden layer of a classical PINN with a VQC:
 
-**Cascade (chain) topology** entangles the qubits sequentially in an open chain: q0→q1→q2, with **no** wrap-around. Information flows down the line of qubits one step at a time. This is the sequential-entanglement structure used in the QCPINN paper, which is why we treat it as the principled default.
+```
+input_proj: Linear(2, 32) → Tanh → Linear(32, n_qubits)   [GPU]
+    ↓
+quantum_layer: VQC (n_qubits, n_qlayers=4)                 [CPU/GPU via JAX]
+    ↓
+postprocessing: Linear(n_qubits, 25) → Tanh → [25→25→25] → Linear(25, n_out)  [GPU]
+```
 
-![Cascade topology](figures/topology_cascade.png)
-
-**Basic (ring) topology** entangles the qubits in a loop: q0→q1, q1→q2, and then a wrap-around gate q2→q0 that closes the ring. Every qubit connects to two neighbours, including the long-range wrap-around link.
-
-![Basic topology](figures/topology_basic.png)
-
-Cascade is a lighter, more orderly entangling pattern; basic adds the extra closing link. **In our experiments, cascade beat basic on both PDEs.**
-
----
-
-## 3. Depth and qubits: the two dials
-
-**Depth** is how many times the entangling layer is repeated. More depth means more expressive power, but also more parameters and a greater risk of the training signal vanishing (the "barren plateau" problem), so it cannot simply be turned up indefinitely.
-
-**Number of qubits** is the width of the quantum feature space. Adding qubits generally lowers the error — but the simulation cost roughly **doubles with every qubit added** (heat went from about 2 → 6 → 12 minutes going from 2 → 3 → 4 qubits). More qubits are only worth it when the accuracy gain justifies the cost.
+**Three configurable axes per variant:**
+- **Encoding**: `angle` — one `AngleEmbedding(inputs, rotation="Y")` before all ansatz layers; `reupload` — re-applies `AngleEmbedding` before *each* ansatz layer (L=4 uploads total)
+- **Ansatz**: `BasicEntanglerLayers` (1 rotation angle/qubit/layer) or `StronglyEntanglingLayers` (3 rotation angles/qubit/layer)
+- **Measurement**: `⟨PauliZ(i)⟩` expectation value per qubit — only expectation values were evaluated (probability-vector measurement is an acknowledged scope gap)
 
 ---
 
-## 4. The recommended design
+## 3. Fourier-Frequency Derivation (from Actual Circuit Code)
 
-Putting it together, the confirmed best architecture is **angle encoding + cascade topology, 3 qubits, depth 3**:
+Per Schuld et al. [3], the encoding gate type determines the accessible frequency spectrum. For this project's `AngleEmbedding(inputs, rotation="Y")`:
 
-![Recommended QAPINN circuit](figures/final_design_angle_cascade_q3d3.png)
+- Each qubit receives `RY(x_i)` with generator $Y/2$, eigenvalues $\pm 1/2$
+- Frequency contribution per qubit: $\omega_i \in \{-1, 0, +1\}$ (pairwise differences of eigenvalues $\times 2$)
 
-Two results held consistently across both equations: **cascade beat basic**, and **angle beat re-upload**. The simpler, more trainable circuit won — re-upload's extra expressivity and basic's extra entangling link did not pay off in practice.
+**For `angle` encoding (1 upload, $n$ qubits):**
+$$\Omega = \{k = \sum_{i=1}^{n} \omega_i : \omega_i \in \{-1,0,+1\}\} \implies k \in [-n, +n]$$
+Up to $2n+1$ distinct frequency components.
+
+**For `reupload` encoding ($L=4$ uploads, $n=3$ qubits):**
+$$\Omega_{\text{reupload}} \subseteq \{k \in [-Ln, +Ln]\} \implies k \in [-12, +12]$$
+Upper bound: $2 \cdot L \cdot n + 1 = 25$ components (vs. Q1's $7$).
+
+**Key confirmed prediction:** Since the *encoding gate* sets $\Omega$ (not the ansatz), switching `BasicEntanglerLayers → StronglyEntanglingLayers` (Q1 → Q5, same `angle` encoding) should **not** change the accessible frequency range. Measured data confirms this — Q1 (max freq 0.635, 5 bins) and Q5 (0.477, 4 bins) are close across all three PDEs; Q4 (reupload) consistently dominates (1.112, 7–8 bins).
+
+**Gap between theoretical upper bound and observed spectrum:** Theory predicts up to 25 components for Q4, but only 7–8 significant bins are observed. Generic random initialisation concentrates Fourier weight in low-frequency components; high-frequency terms are accessible but have vanishingly small coefficients. This gap is evidence that accessible expressivity ≠ effective expressivity.
 
 ---
 
-## Full methodology (PDF)
+## 4. Barren-Plateau (McClean) Argument
 
-The complete write-up — the staged design procedure (screen → confirm → scale), the fair-comparison protocol against classical baselines, the five-seed results tables, and limitations — is here:
+For a sufficiently expressive, randomly-initialised ansatz approximating a unitary 2-design:
 
-**📄 [methodology_report.pdf](methodology_report.pdf)**
+$$\text{Var}_{\boldsymbol{\theta}}\left[\frac{\partial\langle\hat{M}\rangle}{\partial\theta_k}\right] \sim \mathcal{O}(2^{-n})$$
+
+**What this project's data confirms:** A sharp, consistent ~7–8× variance drop from 3→4 qubits, then roughly flat 4→5 qubits — reproduced across all three PDEs with architecturally identical circuits.
+
+**What this project's data does NOT confirm:** The full asymptotic exponential law. The qubit range (3–5) is too narrow to distinguish exponential from other rapidly-decaying trends. The honest claim is "consistent, sharp variance decline with added qubits" — consistent with *onset* of a barren-plateau-type effect, not confirmation of the full asymptotic regime.
+
+---
+
+## 5. JAX ↔ PyTorch Differentiable Bridge
+
+All quantum circuits are executed via PennyLane's JAX interface (`interface="jax"`, `diff_method="backprop"`, JIT-compiled). To enable end-to-end training through the hybrid model, a custom `torch.autograd.Function`-based bridge (`_JaxOp` / `_VJPChain`) uses `jax.vjp` to compute gradients through the quantum circuit and return them to PyTorch's autograd graph.
+
+This supports arbitrary-order differentiation (needed for `u_xx` terms in PDE residuals) without breaking the computational graph at the JAX/PyTorch boundary.
+
+---
+
+## 6. Statistical Testing
+
+Where multi-seed data exists, significance is assessed with:
+- **Welch's t-test** (unequal variances) comparing each QAPINN's Rel L2 against C0
+- **Bonferroni correction** for 5 simultaneous comparisons: corrected $\alpha = 0.01$
+- **5 seeds** per configuration in Stage C sweeps
+
+**Coverage:**
+- Burgers': Q1 and Q4 complete (5 seeds each); Q2/Q3/Q5 Stage C runtime-interrupted
+- Heat: No multi-seed test executed
+- Navier–Stokes: C0 and Q3 only (5 seeds each); Q3 vs C0 p=0.0037 (Bonferroni-significant)
+
+---
+
+## References
+
+[1] Raissi, M., Perdikaris, P., & Karniadakis, G. E. *Physics-Informed Neural Networks.* J. Computational Physics, 378, 686–707 (2019).
+
+[2] Shah, N., Lineswala, P., & Chopra, A. *Benchmarking QA-PINN for CFD.* IEEE Quantum Week (QCE), 2024.
+
+[3] Schuld, M., Sweke, R., & Meyer, J. J. *Effect of data encoding on the expressive power of variational quantum ML models.* Physical Review A, 103, 032430 (2021).
+
+[4] McClean, J. R., Boixo, S., Neven, H., & Babbush, R. *Barren plateaus in quantum neural network training landscapes.* Nature Communications, 9, 4812 (2018).
