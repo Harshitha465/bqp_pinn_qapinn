@@ -4,61 +4,61 @@
 
 ### 1.1 1D Heat Equation (Linear Diffusion)
 
-$$
+```math
 \frac{\partial u}{\partial t} = \alpha \frac{\partial^2 u}{\partial x^2}, \quad x \in [-1,1],\; t \in [0,1], \quad \alpha = 0.1
-$$
+```
 
 Initial and boundary conditions:
 
-$$
+```math
 u(x, 0) = \sin(\pi x), \qquad u(\pm 1, t) = 0
-$$
+```
 
 Exact solution (separation of variables, verified with SymPy):
 
-$$
+```math
 u(x, t) = \sin(\pi x)\,e^{-\alpha \pi^2 t}
-$$
+```
 
 ### 1.2 1D Viscous Burgers' Equation (Nonlinear Convective-Diffusive Transport)
 
-$$
+```math
 \frac{\partial u}{\partial t} + u\,\frac{\partial u}{\partial x} = \nu\,\frac{\partial^2 u}{\partial x^2}, \quad \nu = \frac{0.01}{\pi}, \quad x \in [-1,1],\; t \in [0,1]
-$$
+```
 
 Initial and Dirichlet boundary conditions:
 
-$$
+```math
 u(x, 0) = -\sin(\pi x), \qquad u(\pm 1, t) = 0
-$$
+```
 
 Exact solution: Cole–Hopf transform reduces this to the heat equation; ground truth is computed via Gauss–Hermite quadrature (verified symbolically with SymPy).
 
 ### 1.3 2D Kovasznay Flow (Steady Incompressible Navier–Stokes)
 
-$$
+```math
 \begin{aligned}
 u\,u_x + v\,u_y &= -p_x + \nu\,(u_{xx}+u_{yy}) \\
 u\,v_x + v\,v_y &= -p_y + \nu\,(v_{xx}+v_{yy}) \\
 u_x + v_y &= 0 \qquad (\text{continuity})
 \end{aligned}
-$$
+```
 
 where $\nu = 1/Re$, $Re = 40$. The Kovasznay parameter:
 
-$$
+```math
 \lambda = \frac{Re}{2} - \sqrt{\frac{Re^2}{4} + 4\pi^2} \approx -0.9637
-$$
+```
 
 Exact analytical fields (closed-form, verified with SymPy):
 
-$$
+```math
 \begin{aligned}
 u(x,y) &= 1 - e^{\lambda x}\cos(2\pi y) \\
 v(x,y) &= \frac{\lambda}{2\pi}\,e^{\lambda x}\sin(2\pi y) \\
 p(x,y) &= \frac{1}{2}\left(1 - e^{2\lambda x}\right)
 \end{aligned}
-$$
+```
 
 ---
 
@@ -66,9 +66,9 @@ $$
 
 Per Schuld, Sweke, and Meyer [3], the output of a VQC with angle-encoded inputs is a truncated Fourier series:
 
-$$
+```math
 f(\mathbf{x}, \boldsymbol{\theta}) = \langle \hat{M} \rangle = \sum_{\omega \in \Omega} c_\omega(\boldsymbol{\theta})\,e^{i\omega x}
-$$
+```
 
 The accessible frequency set $\Omega$ is determined entirely by the **encoding gate** (not the ansatz).
 
@@ -76,9 +76,9 @@ The accessible frequency set $\Omega$ is determined entirely by the **encoding g
 
 Every QAPINN variant uses `AngleEmbedding(inputs, rotation="Y")` — i.e., $RY(x_i)$ on each qubit $i$. The generator is $Y/2$ with eigenvalues $\pm 1/2$; the resulting per-qubit frequency contribution is:
 
-$$
+```math
 \omega_i \in \{-1, 0, +1\}
-$$
+```
 
 (pairwise differences of eigenvalues, scaled by 2).
 
@@ -86,9 +86,9 @@ $$
 
 Each input coordinate independently encoded into $n$ qubits. Total accessible frequency set:
 
-$$
+```math
 \Omega = \left\{k = \sum_{i=1}^{n}\omega_i \;:\; \omega_i \in \{-1,0,+1\}\right\}, \quad k \in [-n, +n]
-$$
+```
 
 Upper bound: $2n+1$ distinct components.
 
@@ -102,9 +102,9 @@ Upper bound: $2n+1$ distinct components.
 
 `AngleEmbedding` is applied once before each of the 4 ansatz layers, multiplying the number of independent $\pm 1/2$ generators to $L \cdot n_\text{qubits}$:
 
-$$
+```math
 k \in [-L \cdot n, +L \cdot n], \quad \text{upper bound: } 2Ln + 1 = 2 \cdot 4 \cdot 3 + 1 = 25 \text{ components}
-$$
+```
 
 **Confirmed prediction:** Q4 consistently shows the widest measured spectrum across all three PDEs (7–8 significant bins vs. 4–7 for angle-encoded configs). The gap between 25 theoretical components and 7–8 observed is expected — random initialisation concentrates Fourier weight in low-frequency components; high-frequency terms are accessible but carry vanishingly small coefficients.
 
@@ -118,9 +118,9 @@ Since the **ansatz** only reshapes coefficient magnitudes within $\Omega$ (not t
 
 For a sufficiently expressive, randomly-initialised ansatz approximating a unitary 2-design (McClean et al. [4]):
 
-$$
+```math
 \text{Var}_{\boldsymbol{\theta}}\!\left[\frac{\partial\langle\hat{M}\rangle}{\partial\theta_k}\right] \sim \mathcal{O}(2^{-n})
-$$
+```
 
 ### 3.1 Measured Results (McClean-Style Scan)
 
