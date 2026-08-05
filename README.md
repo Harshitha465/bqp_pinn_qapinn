@@ -35,21 +35,19 @@ The objectives of this project are to:
 ```text
 bqp_pinn_qapinn/
 │
-├── README.md                          # Project overview and usage instructions
-├── REPORT.pdf                         # Technical report
-├── PRESENTATION.pptx                  # Final project presentation
-├── requirements.txt                   # Python dependencies
-├── LICENSE                            # Project license
+├── README.md                          # Project overview and documentation
+├── requirements.txt                   # Project dependencies
+├── .gitignore                         # Git ignore rules
 │
 ├── models/
-│   ├── pinn_classical.py              # Classical PINN implementation
+│   ├── pinn.py                        # Classical PINN implementation
 │   ├── qapinn.py                      # Quantum-Assisted PINN implementation
-│   └── quantum_layer.py               # Variational Quantum Circuit (VQC) layer
+│   └── quantum_layers.py              # Variational Quantum Circuit (VQC) layers
 │
 ├── notebooks/
-│   ├── QAPINN_Heat_Equation_Full_Parity_JAX.ipynb
-│   ├── QAPINN_Burgers_Equation_Experiments_final_JAX.ipynb
-│   └── NavierStokes_Kovasznay.ipynb
+│   ├── Burgers_Equation_JAX.ipynb     # Burgers' Equation experiments
+│   ├── Heat_Equation_JAX.ipynb        # Heat Equation experiments
+│   └── NavierStokes_Kovasznay.ipynb   # Kovasznay Flow (Navier–Stokes) experiments
 │
 ├── results/
 │   ├── Burgers/
@@ -77,9 +75,63 @@ bqp_pinn_qapinn/
 │       └── metrics.csv
 │
 ├── docs/
-│   ├── methodology.md                 # Project methodology
-│   ├── mathematical_analysis.md       # Mathematical formulation and analysis
-│   └── reproducibility.md             # Reproducibility instructions
+│   ├── methodology.md
+│   ├── mathematical_analysis.md
+│   └── reproducibility.md
 │
-└── references/                        # Research papers and supporting resources
+├── REPORT.pdf                         # Technical report
+├── PRESENTATION.pptx                  # Project presentation
+└── LICENSE                            # License
 ```
+
+## Experimental Setup
+
+The experiments were designed to evaluate the impact of introducing a **Variational Quantum Circuit (VQC)** as a replacement for the first hidden layer of a classical Physics-Informed Neural Network (PINN). Classical and quantum-assisted models were trained and evaluated under comparable settings across multiple benchmark partial differential equations.
+
+### Benchmark Problems
+
+The following benchmark PDEs were considered:
+
+- **Burgers' Equation** – A nonlinear PDE used to study shock formation and nonlinear wave propagation.
+- **Heat Equation** – A linear diffusion equation used to evaluate model behavior on smooth solutions.
+- **Navier–Stokes (Kovasznay Flow)** – A two-dimensional steady-state fluid dynamics benchmark used to assess model performance on complex nonlinear systems.
+
+### Model Configurations
+
+Six model configurations were evaluated throughout the study.
+
+| Configuration | Description |
+|---------------|-------------|
+| **C0** | Classical Physics-Informed Neural Network (PINN) |
+| **Q1** | 3-Qubit, Angle Encoding, Basic Entangler |
+| **Q2** | 4-Qubit, Angle Encoding, Basic Entangler |
+| **Q3** | 5-Qubit, Angle Encoding, Basic Entangler |
+| **Q4** | 3-Qubit, Data Re-uploading, Basic Entangler |
+| **Q5** | 3-Qubit, Angle Encoding, Strongly Entangling Ansatz |
+
+### Technologies Used
+
+- **Programming Language:** Python
+- **Machine Learning Framework:** JAX
+- **Quantum Machine Learning Framework:** PennyLane
+- **Optimization Library:** Optax
+- **Scientific Computing:** NumPy, SciPy
+- **Visualization:** Matplotlib
+
+### Execution Environment
+
+- Google Colab
+- PennyLane `default.qubit` quantum simulator
+- JAX JIT compilation for accelerated execution
+
+### Evaluation Metrics
+
+Model performance was evaluated using the following metrics:
+
+- Relative L2 Error
+- PDE Residual Error
+- Training Time
+- Number of Trainable Parameters
+- Fourier Spectrum Analysis
+- Gradient Variance Analysis
+- Activation Map Visualization
