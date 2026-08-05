@@ -57,7 +57,7 @@ $$\omega_i \in \{-1, 0, +1\}$$
 
 Each input coordinate independently encoded into $n$ qubits. Total accessible frequency set:
 
-$$\Omega = \left\{k = \sum_{i=1}^{n}\omega_i \;:\; \omega_i \in \{-1,0,+1\}\right\}, \quad k \in [-n, +n]$$
+$$\Omega=\left\{k\in[-n,+n]:k=\sum_{i=1}^{n}\omega_i,\ \omega_i\in\{-1,0,+1\}\right\}$$
 
 Upper bound: $2n+1$ distinct components.
 
