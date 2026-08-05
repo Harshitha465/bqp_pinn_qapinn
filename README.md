@@ -121,7 +121,7 @@ Six model configurations were evaluated throughout the study.
 - **Quantum Machine Learning Framework:** PennyLane
 - **Optimization Library:** Optax
 - **Scientific Computing:** NumPy, SciPy
-- **Visualization:** Matplotlib
+- **Visualization:** Matplotlib, Seaborn
 
 ### Execution Environment
 
