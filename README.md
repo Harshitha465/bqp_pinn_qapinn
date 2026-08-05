@@ -157,7 +157,7 @@ The key findings of this study include:
 - Investigate FPGA-based hardware acceleration for the classical components of hybrid quantum-classical PINN training to improve computational efficiency, scalability, and energy efficiency.
 - Develop more efficient hybrid quantum-classical workflows for solving large-scale scientific and engineering problems.
 
-  ## Installation
+## Installation
 
 Clone the repository:
 
@@ -174,6 +174,7 @@ pip install -r requirements.txt
 ## References
 
 The research papers and supporting resources used in this project are available in the `references/` folder.
+
 
 ## Team Contributions
 
