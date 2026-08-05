@@ -173,6 +173,6 @@ The final notebooks and repository represent a unified implementation that integ
 
 | Team Member | Primary Contribution |
 |-------------|----------------------|
-| **Lingerker Harshita Bai** |Led the implementation of the Classical PINN and QAPINN models, conducted experiments across all benchmark PDEs, integrated the final notebooks, organized the project repository, and documented the experimental findings. |
+| **Lingerker Harshita Bai** |Led the implementation of the Classical PINN and QAPINN models, conducted experiments and performance analysis across all benchmark PDEs, integrated the final notebooks, organized the project repository, and documented the experimental findings. |
 | **Ansh Goel** | Focused on designing and implementing the experimental framework, evaluating multiple quantum circuit configurations, conducting systematic benchmarking, analyzing parameter efficiency and training performance, and deriving evidence-based conclusions through comprehensive experimental studies. |
 | **Amavasya Manoj Kumar Reddy** | Led the research methodology and project design, developed the theoretical and mathematical foundation, designed the experimental investigation, conducted literature review and scientific analysis, interpreted the experimental findings, and prepared the technical report and supporting project documentation. |
