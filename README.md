@@ -171,6 +171,9 @@ Install the required dependencies:
 ```bash
 pip install -r requirements.txt
 ```
+## References
+
+The research papers and supporting resources used in this project are available in the `references/` folder.
 
 ## Team Contributions
 
@@ -185,3 +188,11 @@ The final notebooks and repository represent a unified implementation that integ
 | **Lingerker Harshita Bai** |Led the implementation of the Classical PINN and QAPINN models, conducted experiments and performance analysis across all benchmark PDEs, integrated the final notebooks, organized the project repository, and documented the experimental findings. |
 | **Ansh Goel** | Focused on designing and implementing the experimental framework, evaluating multiple quantum circuit configurations, conducting systematic benchmarking, analyzing parameter efficiency and training performance, and deriving evidence-based conclusions through comprehensive experimental studies. |
 | **Amavasya Manoj Kumar Reddy** | Led the research methodology and project design, developed the theoretical and mathematical foundation, designed the experimental investigation, conducted literature review and scientific analysis, interpreted the experimental findings, and prepared the technical report and supporting project documentation. |
+
+## License
+
+This project is intended for academic and research purposes.
+
+## Acknowledgements
+
+This project was carried out as part of the **WISER Quantum + AI Summer Program 2026** and submitted for the **BQP Challenge 2026**. We acknowledge the guidance, learning opportunities, and platform provided through the program.
