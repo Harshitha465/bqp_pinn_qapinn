@@ -135,3 +135,15 @@ Model performance was evaluated using the following metrics:
 - Fourier Spectrum Analysis
 - Gradient Variance Analysis
 - Activation Map Visualization
+
+  ## Results Summary
+
+The experimental study demonstrates that the effectiveness of Quantum-Assisted Physics-Informed Neural Networks (QAPINNs) is highly dependent on both the underlying partial differential equation and the chosen quantum circuit architecture. Rather than consistently outperforming classical PINNs, the introduction of a quantum layer alters the learning dynamics in ways that vary across different problem domains.
+
+The key findings of this study include:
+
+- The 5-qubit angle-encoded QAPINN (Q3) achieved the strongest statistically significant improvement over the classical PINN on the Navier–Stokes (Kovasznay Flow) benchmark.
+- Data re-uploading consistently increased the accessible Fourier spectrum, indicating greater representational capacity, but did not consistently translate into improved predictive performance.
+- Increasing the number of qubits reduced gradient variance, highlighting a trade-off between model expressivity and trainability.
+- The strongly entangling ansatz exhibited PDE-dependent training behavior, demonstrating that the effectiveness of a quantum circuit depends on the characteristics of the underlying differential equation.
+- Overall, the results indicate that quantum layers provide problem-specific advantages rather than serving as a universal replacement for classical PINNs.
