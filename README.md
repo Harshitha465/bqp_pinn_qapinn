@@ -148,6 +148,15 @@ The key findings of this study include:
 - The strongly entangling ansatz exhibited PDE-dependent training behavior, demonstrating that the effectiveness of a quantum circuit depends on the characteristics of the underlying differential equation.
 - Overall, the results indicate that quantum layers provide problem-specific advantages rather than serving as a universal replacement for classical PINNs.
 
+## Future Work
+
+- Extend the evaluation to more complex and higher-dimensional PDEs, including full Navier–Stokes flow problems, to further assess the scalability and robustness of the proposed approach.
+- Incorporate **Quantum Reservoir Computing Frameworks (QRCF)** as an additional baseline for comparison alongside Classical PINNs and QAPINNs.
+- Explore alternative quantum data encoding methods, variational circuit architectures, and optimization strategies to improve model accuracy, convergence, and training stability.
+- Evaluate the models on real quantum hardware and noise-aware simulators to study practical deployment and robustness.
+- Investigate FPGA-based hardware acceleration for the classical components of hybrid quantum-classical PINN training to improve computational efficiency, scalability, and energy efficiency.
+- Develop more efficient hybrid quantum-classical workflows for solving large-scale scientific and engineering problems.
+
   ## Installation
 
 Clone the repository:
