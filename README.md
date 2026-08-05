@@ -2,6 +2,11 @@
 
 **WISER Summer Program 2026 – BQP Challenge**
 
+**Team Members**
+- Lingerker Harshita Bai
+- Amavasya Manoj Kumar Reddy
+- Ansh Goel
+
 ## Challenge Statement
 
 The challenge investigates how the introduction of a **quantum layer** influences the learning process of **Physics-Informed Neural Networks (PINNs)**. Rather than demonstrating that Quantum-Assisted PINNs (QAPINNs) simply outperform classical PINNs, the focus is on understanding:
