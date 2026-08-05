@@ -29,3 +29,57 @@ The objectives of this project are to:
 - Analyze learning dynamics using Explainable AI (XAI) techniques, including Fourier spectrum analysis, gradient variance analysis, and activation map visualization.
 - Assess the effectiveness of QAPINNs using quantitative performance metrics such as Relative L2 Error, PDE residual error, training time, and model complexity.
 - Develop insights and design guidelines for constructing problem-specific quantum-enhanced architectures for solving partial differential equations.
+
+## Repository Structure
+
+```text
+bqp_pinn_qapinn/
+│
+├── README.md                          # Project overview and usage instructions
+├── REPORT.pdf                         # Technical report
+├── PRESENTATION.pptx                  # Final project presentation
+├── requirements.txt                   # Python dependencies
+├── LICENSE                            # Project license
+│
+├── models/
+│   ├── pinn_classical.py              # Classical PINN implementation
+│   ├── qapinn.py                      # Quantum-Assisted PINN implementation
+│   └── quantum_layer.py               # Variational Quantum Circuit (VQC) layer
+│
+├── notebooks/
+│   ├── QAPINN_Heat_Equation_Full_Parity_JAX.ipynb
+│   ├── QAPINN_Burgers_Equation_Experiments_final_JAX.ipynb
+│   └── NavierStokes_Kovasznay.ipynb
+│
+├── results/
+│   ├── Burgers/
+│   │   ├── master_performance_table.png
+│   │   ├── prediction_vs_exact.png
+│   │   ├── fourier_spectrum.png
+│   │   ├── activation_maps.png
+│   │   ├── training_loss.png
+│   │   └── metrics.csv
+│   │
+│   ├── Heat/
+│   │   ├── master_performance_table.png
+│   │   ├── prediction_vs_exact.png
+│   │   ├── fourier_spectrum.png
+│   │   ├── activation_maps.png
+│   │   ├── training_loss.png
+│   │   └── metrics.csv
+│   │
+│   └── Navier_Stokes/
+│       ├── master_performance_table.png
+│       ├── prediction_vs_exact.png
+│       ├── fourier_spectrum.png
+│       ├── activation_maps.png
+│       ├── training_loss.png
+│       └── metrics.csv
+│
+├── docs/
+│   ├── methodology.md                 # Project methodology
+│   ├── mathematical_analysis.md       # Mathematical formulation and analysis
+│   └── reproducibility.md             # Reproducibility instructions
+│
+└── references/                        # Research papers and supporting resources
+```
