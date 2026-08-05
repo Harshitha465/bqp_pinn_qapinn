@@ -162,3 +162,17 @@ Install the required dependencies:
 ```bash
 pip install -r requirements.txt
 ```
+
+## Team Contributions
+
+This project was developed collaboratively by **Lingerker Harshita Bai**, **Ansh Goel**, and **Amavasya Manoj Kumar Reddy**. Each team member independently implemented and experimented on all three benchmark problems—**Burgers' Equation, Heat Equation, and Navier–Stokes (Kovasznay Flow)**. Individual implementations were systematically evaluated, compared, and reviewed through collaborative discussions.
+
+The final notebooks and repository represent a unified implementation that integrates the strongest ideas, validated methodologies, and best-performing approaches from each member's work, resulting in a consistent, reproducible, and optimized solution across all benchmark problems.
+
+### Primary Areas of Contribution
+
+| Team Member | Primary Contribution |
+|-------------|----------------------|
+| **Lingerker Harshita Bai** | Focused on implementing the Classical PINN and QAPINN models, conducting experiments across all benchmark PDEs, comparing model performance, organizing the final repository, and documenting the experimental findings. |
+| **Ansh Goel** | Focused on designing and implementing the experimental framework, evaluating multiple quantum circuit configurations, conducting systematic benchmarking, analyzing parameter efficiency and training performance, and deriving evidence-based conclusions through comprehensive experimental studies. |
+| **Amavasya Manoj Kumar Reddy** | Focused on developing the theoretical foundation, conducting literature review and research analysis, providing the mathematical basis of the proposed methodology, and interpreting the experimental results. |
