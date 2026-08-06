@@ -139,8 +139,8 @@ NS uses a slightly different input dimension (2 outputs for `u,v` + pressure `p`
 
 Run in this order (each notebook is self-contained but references the same model definitions):
 
-1. `notebooks/Heat_Equation_JAX.ipynb` — 1D linear diffusion (fastest; good for environment verification)
-2. `notebooks/Burgers_Equation_JAX.ipynb` — 1D viscous Burgers' (primary benchmark)
+1. `notebooks/Heat_Equation.ipynb` — 1D linear diffusion (fastest; good for environment verification)
+2. `notebooks/Burgers_Equation.ipynb` — 1D viscous Burgers' (primary benchmark)
 3. `notebooks/NavierStokes_Kovasznay.ipynb` — 2D Kovasznay flow (longest; ~400 s for Q3 alone)
 
 ---
@@ -149,8 +149,8 @@ Run in this order (each notebook is self-contained but references the same model
 
 | Issue | Affected Notebook | Root Cause |
 |-------|------------------|------------|
-| Burgers Stage C incomplete | `Burgers_Equation_JAX.ipynb` | Colab runtime interrupted mid-sweep during seed 47/97 of Q3's run (no error — session timeout) |
-| Heat Stage C not executed | `Heat_Equation_JAX.ipynb` | No Stage C cell written in this notebook despite `RUN_STAGE_C=True` flag |
+| Burgers Stage C incomplete | `Burgers_Equation.ipynb` | Colab runtime interrupted mid-sweep during seed 47/97 of Q3's run (no error — session timeout) |
+| Heat Stage C not executed | `Heat_Equation.ipynb` | No Stage C cell written in this notebook despite `RUN_STAGE_C=True` flag |
 | NS Stage C covers C0+Q3 only | `NavierStokes_Kovasznay.ipynb` | Intentional scope decision; Q1/Q2/Q4/Q5 ns results are single-seed |
 | NS McClean cross-seed std=0.000 | `NavierStokes_Kovasznay.ipynb` | Seed not re-applied inside the 5-iteration McClean robustness loop; all 5 "different seeds" ran identically |
 | McClean zero-input degeneracy bug | (fixed before final runs) | `angle` vs. `reupload` encoding collapsed to identical circuits under `torch.zeros` input; patched in final notebooks |

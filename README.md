@@ -1,5 +1,9 @@
 # Quantum-Assisted Physics-Informed Neural Networks (QAPINN) for CFD
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Report](https://img.shields.io/badge/Report-PDF-blue)](REPORT.pdf)
+[![Presentation](https://img.shields.io/badge/Presentation-PPTX-orange)](PRESENTATION.pptx)
+
 > **BQP WISER Global Quantum+AI 2026** — Research repository investigating *when, why, and how* substituting a variational quantum circuit into a classical PINN changes its learning dynamics for PDE-governed fluid systems.
 
 **Team Members**
@@ -180,29 +184,26 @@ bqp_pinn_qapinn/
 ├── models/
 │   ├── pinn_classical.py              ← ClassicalPINN (FC baseline)
 │   ├── qapinn.py                      ← QAPINN hybrid architecture
-│   ├── quantum_layer.py               ← JAX↔PyTorch differentiable bridge
-│   ├── pinn.py                        ← Compatibility re-export
-│   └── quantum_layers.py             ← Compatibility re-export
+│   └── quantum_layer.py               ← JAX↔PyTorch differentiable bridge
 │
 ├── notebooks/
-│   ├── Burgers_Equation_JAX.ipynb     ← Primary benchmark (full outputs)
-│   ├── Heat_Equation_JAX.ipynb        ← Linear PDE generalization check
+│   ├── Burgers_Equation.ipynb         ← Primary benchmark (full outputs)
+│   ├── Heat_Equation.ipynb            ← Linear PDE generalization check
 │   └── NavierStokes_Kovasznay.ipynb   ← 2D NS stress test (full outputs)
 │
 ├── results/
-│   ├── master_performance_table.csv   ← Cross-PDE summary (18 runs)
 │   ├── README.md                      ← Results interpretation + caveats
 │   ├── Burgers/
-│   │   ├── metrics.csv
-│   │   ├── training_loss.csv
-│   │   ├── fourier_spectrum_summary.csv
-│   │   ├── activation_maps_summary.csv
-│   │   ├── stage_c_summary.csv
-│   │   └── welch_ttest.csv
+│   │   ├── metrics.csv                ← Per-config performance data
+│   │   ├── training_loss.png
+│   │   ├── comparison_bars.png
+│   │   ├── fourier_spectrum.png
+│   │   ├── activation_maps.png
+│   │   └── master_performance_table.png
 │   ├── Heat/
-│   │   └── (same structure, no welch_ttest — no Stage C executed)
-│   └── NavierStokes/
-│       └── (same structure, welch_ttest covers Q3 vs C0 only)
+│   │   └── (same structure)
+│   └── Navier_Stokes/
+│       └── (same structure)
 │
 ├── docs/
 │   ├── methodology.md                 ← Mathematical framework & derivations
@@ -241,8 +242,8 @@ pip install -r requirements.txt
 **Global seed:** `SEED = 42` for all single-seed main-matrix runs. Stage C sweeps use seeds `[11, 29, 47, 97, ...]`.
 
 Run notebooks in order:
-1. `notebooks/Heat_Equation_JAX.ipynb`
-2. `notebooks/Burgers_Equation_JAX.ipynb`
+1. `notebooks/Heat_Equation.ipynb`
+2. `notebooks/Burgers_Equation.ipynb`
 3. `notebooks/NavierStokes_Kovasznay.ipynb`
 
 See [`docs/reproducibility.md`](docs/reproducibility.md) for full hyperparameter table and environment details.
@@ -278,7 +279,7 @@ The final notebooks and repository represent a unified implementation that integ
 
 ## Limitations
 
-> Full discussion in `REPORT.pdf` §6 and `results/README.md`.
+> Full discussion in the Technical Report §6 and [`results/README.md`](results/README.md).
 
 - **Burgers' Stage C is incomplete** — Q2/Q3/Q5 multi-seed sweep was runtime-interrupted (Colab session limit). Only Q1 and Q4 have valid 5-seed statistics. Q3/Q5 single-seed wins are suggestive, not confirmed.
 - **Heat equation has no multi-seed test** — all heat numbers are single-seed (SEED=42). The `RUN_STAGE_C=True` flag exists but no Stage C execution cell was written in that notebook.

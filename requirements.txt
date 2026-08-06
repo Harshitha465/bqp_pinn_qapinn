@@ -10,7 +10,8 @@ jax==0.9.2
 jaxlib==0.9.2
 
 # Scientific computing
-numpy
+# Keep NumPy on a modern, secure 1.26.x line for compatibility with JAX 0.9.2/PennyLane 0.45.x
+numpy>=1.26.4,<2.0
 scipy
 sympy
 
